@@ -14,12 +14,7 @@ def ensure_prereqs():
         raise RuntimeError('current user not in the "mock" group.')
 
     # Ensure centos-packager (ie, /usr/bin/cbs) is installed.
-    cmd = ['rpm', '-qv', 'centos-packager']
-    try:
-        subprocess.check_call(cmd)
-    except subprocess.CalledProcessError:
-        cmd = ['yum', '-y', 'install', 'centos-packager']
-        subprocess.check_call(cmd)
+    ensure_package('centos-packager')
 
     # Ensure cbs x509 cert is in place:
     certpath = os.expanduser('~/.centos.cert')
@@ -30,6 +25,15 @@ def ensure_prereqs():
             raise
     centos_cert = os.environ['CENTOS_CERT']
     os.symlink(certpath, centos_cert)
+
+
+def ensure_package(pkg):
+    cmd = ['rpm', '-qv', pkg]
+    try:
+        subprocess.check_call(cmd)
+    except subprocess.CalledProcessError:
+        cmd = ['yum', '-y', 'install', pkg]
+        subprocess.check_call(cmd)
 
 
 def get_version():

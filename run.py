@@ -29,7 +29,7 @@ def ensure_prereqs():
         if e.errno != errno.ENOENT:
             raise
     centos_cert = os.environ['CENTOS_CERT']
-    os.symlink(certpath, centos_cert)
+    os.symlink(centos_cert, certpath)
 
 
 def ensure_package(pkg):

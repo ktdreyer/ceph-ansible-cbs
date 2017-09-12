@@ -86,6 +86,14 @@ def get_cbs_target(version):
 def make_srpm():
     """ Run "make srpm" and return the filename of the resulting .src.rpm. """
     cmd = ['make', 'srpm']
+    # Workaround the incompat between fedpkg and centos-packager
+    # (needs to go into ceph-ansible Makefile upstream..)
+    cmd = ['rpmbuild', '-bs', 'ceph-ansible.spec',
+           '--define', '_topdir .',
+           '--define', '_sourcedir .',
+           '--define', '_srcrpmdir .',
+           '--define', 'dist .el7',
+           ]
     subprocess.check_call(cmd)
     # TODO: cat some logs if that call failed?
     files = glob('ceph-ansible-*.src.rpm')

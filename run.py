@@ -1,6 +1,24 @@
+import grp
 from glob import glob
+import os
 import re
 import subprocess
+
+
+def ensure_prereqs():
+    """ Ensure everything is set up as expected. """
+    # Ensure we are a member of the "mock" Unix group.
+    groups = [grp.getgrgid(g).gr_name for g in os.getgroups()]
+    if 'mock' not in groups:
+        raise RuntimeError('current user not in the "mock" group.')
+
+    # Ensure centos-packager (ie, /usr/bin/cbs) is installed.
+    cmd = ['rpm', '-qv', 'centos-packager']
+    try:
+        subprocess.check_call(cmd)
+    except subprocess.CalledProcessError:
+        cmd = ['yum', '-y', 'install', 'centos-packager']
+        subprocess.check_call(cmd)
 
 
 def get_version():
@@ -11,7 +29,7 @@ def get_version():
     return output
 
 
-def cbs_build(target, srpm):
+def cbs_build(target, srpm, scratch=True):
     """
     Build a SRPM in CBS for a target.
 
@@ -19,6 +37,8 @@ def cbs_build(target, srpm):
     :param   srpm: path to a .src.rpm file.
     """
     cmd = ['cbs', 'build', target, srpm]
+    if scratch:
+        cmd += ['--scratch']
     subprocess.check_call(cmd)
 
 
@@ -49,6 +69,7 @@ def make_srpm():
     return files[0]
 
 
+ensure_prereqs()
 version = get_version()
 target = get_cbs_target(version)
 srpm = make_srpm()

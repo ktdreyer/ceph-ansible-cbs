@@ -20,8 +20,6 @@ def ensure_prereqs():
 
     # Ensure centos-packager (ie, /usr/bin/cbs) is installed.
     ensure_package('centos-packager')
-    ensure_package('epel-release')
-    ensure_package('fedpkg')
 
     # Ensure cbs x509 cert is in place:
     certpath = os.path.expanduser('~/.centos.cert')

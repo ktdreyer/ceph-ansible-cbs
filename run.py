@@ -22,7 +22,7 @@ def ensure_prereqs():
     ensure_package('centos-packager')
 
     # Ensure cbs x509 cert is in place:
-    certpath = os.expanduser('~/.centos.cert')
+    certpath = os.path.expanduser('~/.centos.cert')
     try:
         os.unlink(certpath)
     except OSError as e:

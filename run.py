@@ -8,6 +8,9 @@ import re
 import subprocess
 
 
+# Intended to run in Jenkins after every new Git tag.
+
+
 def ensure_prereqs():
     """ Ensure everything is set up as expected. """
     # Ensure we are a member of the "mock" Unix group.

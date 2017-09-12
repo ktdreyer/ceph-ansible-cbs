@@ -88,6 +88,7 @@ def make_srpm():
     cmd = ['make', 'srpm']
     # Workaround the incompat between fedpkg and centos-packager
     # (needs to go into ceph-ansible Makefile upstream..)
+    subprocess.check_call(['make', 'dist', 'spec'])
     subprocess.check_call(['make', 'spec'])
     cmd = ['rpmbuild', '-bs', 'ceph-ansible.spec',
            '--define', '_topdir .',

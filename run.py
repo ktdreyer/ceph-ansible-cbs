@@ -1,3 +1,4 @@
+import errno
 import grp
 from glob import glob
 import os
@@ -19,6 +20,16 @@ def ensure_prereqs():
     except subprocess.CalledProcessError:
         cmd = ['yum', '-y', 'install', 'centos-packager']
         subprocess.check_call(cmd)
+
+    # Ensure cbs x509 cert is in place:
+    certpath = os.expanduser('~/.centos.cert')
+    try:
+        os.unlink(certpath)
+    except OSError as e:
+        if e.errno != errno.ENOENT:
+            raise
+    centos_cert = os.environ['CENTOS_CERT']
+    os.symlink(certpath, centos_cert)
 
 
 def get_version():

@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 import errno
 import grp
 from glob import glob

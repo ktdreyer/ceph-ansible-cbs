@@ -23,6 +23,9 @@ def ensure_prereqs():
 
     # Ensure cbs x509 cert is in place:
     certpath = os.path.expanduser('~/.centos.cert')
+    if 'CENTOS_CERT' not in os.environ:
+        # Manual testing? don't bother setting up the cert symlink.
+        return
     try:
         os.unlink(certpath)
     except OSError as e:

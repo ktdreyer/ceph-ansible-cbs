@@ -37,7 +37,7 @@ def ensure_package(pkg):
     try:
         subprocess.check_call(cmd)
     except subprocess.CalledProcessError:
-        cmd = ['yum', '-y', 'install', pkg]
+        cmd = ['sudo', 'yum', '-y', 'install', pkg]
         subprocess.check_call(cmd)
 
 

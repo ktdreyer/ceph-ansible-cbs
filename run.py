@@ -47,7 +47,7 @@ def get_version():
     try:
         output = subprocess.check_output(cmd)
     except subprocess.CalledProcessError:
-        print('failed to find "v" git tags in %s' os.getcwd())
+        print('failed to find "v" git tags in %s' % os.getcwd())
         raise
     # py3 needs to decode output here before returning...
     return output

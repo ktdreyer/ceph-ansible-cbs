@@ -43,7 +43,7 @@ def ensure_package(pkg):
 
 def get_version():
     """ Get a version from "git describe".  """
-    cmd = ['git', 'describe', '--tags', '--abbrev=0', '--match "v*"']
+    cmd = ['git', 'describe', '--tags', '--abbrev=0', '--match', '"v*"']
     output = subprocess.check_output(cmd)
     # py3 needs to decode output here before returning...
     return output

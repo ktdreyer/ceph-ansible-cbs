@@ -2,6 +2,7 @@ Intended steps:
 ===============
 
 * Poll for new ceph-ansible tag in GitHub
+  node: `CentOS-7-x86_64-GenericCloud-released-latest`
 
 * `make srpm`
 
@@ -9,4 +10,6 @@ Intended steps:
 
 * (Authenticate Jenkins user for CBS - how?)
 
-* `cbs build --target=target... ceph-ansible...src.rpm` (need exact parameters here)
+* `cbs build target ceph-ansible...src.rpm`
+
+* Upload source to dist-git

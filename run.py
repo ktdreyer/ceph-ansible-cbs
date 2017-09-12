@@ -85,7 +85,7 @@ def get_cbs_target(version):
 
 def make_srpm():
     """ Run "make srpm" and return the filename of the resulting .src.rpm. """
-    cmd = ['cbs', 'build', target, srpm]
+    cmd = ['make', 'srpm']
     subprocess.check_call(cmd)
     # TODO: cat some logs if that call failed?
     files = glob('ceph-ansible-*.src.rpm')

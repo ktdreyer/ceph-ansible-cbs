@@ -6,6 +6,8 @@ from glob import glob
 import os
 import re
 import subprocess
+import sys
+import requests
 
 
 # Intended to run in Jenkins after every new Git tag.
@@ -33,6 +35,28 @@ def ensure_prereqs():
             raise
     centos_cert = os.environ['CENTOS_CERT']
     os.symlink(centos_cert, certpath)
+
+    ensure_server_ca()
+
+
+def ensure_server_ca():
+    """ Ensure that the CentOS server cert authority is in place. """
+    # copied from centos-packager (GPLv3)
+    servercapath = os.path.expanduser('~/.centos-server-ca.cert')
+    if os.path.exists(servercapath):
+        return
+    servercaurl = 'https://accounts.centos.org/ca/ca-cert.pem'
+    with open(servercapath, 'w') as servercacertfile:
+        r = requests.get(servercaurl)
+        try:
+            r.raise_for_status()
+        except requests.exceptions.HTTPError as e:
+            print("""Could not download CA Certificate!
+Response Code: {0}
+Message: {1}""".format(e.response.status_code, e.response.reason)).strip()
+            sys.exit(1)
+        response = r.text
+        servercacertfile.write(response)
 
 
 def ensure_package(pkg):

@@ -46,6 +46,7 @@ def ensure_server_ca():
     if os.path.exists(servercapath):
         return
     servercaurl = 'https://accounts.centos.org/ca/ca-cert.pem'
+    print('downloading %s to %s' % (servercaurl, servercapath))
     with open(servercapath, 'w') as servercacertfile:
         r = requests.get(servercaurl)
         try:

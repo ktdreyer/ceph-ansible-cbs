@@ -38,6 +38,10 @@ def ensure_prereqs():
 
     ensure_server_ca()
 
+    subprocess.check_call(['centos-cert', '-v'])
+
+    subprocess.check_call(['cbs', 'hello'])
+
 
 def ensure_server_ca():
     """ Ensure that the CentOS server cert authority is in place. """

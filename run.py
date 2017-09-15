@@ -38,6 +38,8 @@ def ensure_prereqs():
 
     ensure_server_ca()
 
+    sys.stdout.flush()
+
     subprocess.check_call(['centos-cert', '-v'])
 
     subprocess.check_call(['cbs', 'hello'])

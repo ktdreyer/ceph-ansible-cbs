@@ -38,6 +38,7 @@ def ensure_centos_cert():
     certpath = os.path.expanduser('~/.centos.cert')
     if 'CENTOS_CERT' not in os.environ:
         # Manual testing? don't bother setting up the cert symlink.
+        print('CENTOS_CERT env var is not set. Not touching %s' % certpath)
         return
     try:
         os.unlink(certpath)

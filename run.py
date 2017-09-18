@@ -91,7 +91,7 @@ def get_version():
     return output
 
 
-def cbs_build(target, srpm, scratch=True):
+def cbs_build(target, srpm, scratch=False):
     """
     Build a SRPM in CBS for a target.
 

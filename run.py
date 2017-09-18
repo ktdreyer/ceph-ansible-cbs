@@ -49,7 +49,6 @@ def ensure_centos_cert():
     os.symlink(centos_cert, certpath)
 
 
-
 def ensure_server_ca():
     """ Ensure that the CentOS server cert authority is in place. """
     # copied from centos-packager (GPLv3)

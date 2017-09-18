@@ -23,7 +23,18 @@ def ensure_prereqs():
     # Ensure centos-packager (ie, /usr/bin/cbs) is installed.
     ensure_package('centos-packager')
 
-    # Ensure cbs x509 cert is in place:
+    ensure_centos_cert()
+    ensure_server_ca()
+
+    sys.stdout.flush()
+
+    subprocess.check_call(['centos-cert', '-v'])
+
+    subprocess.check_call(['cbs', 'hello'])
+
+
+def ensure_centos_cert():
+    """ Ensure cbs x509 cert is in place """
     certpath = os.path.expanduser('~/.centos.cert')
     if 'CENTOS_CERT' not in os.environ:
         # Manual testing? don't bother setting up the cert symlink.
@@ -36,13 +47,6 @@ def ensure_prereqs():
     centos_cert = os.environ['CENTOS_CERT']
     os.symlink(centos_cert, certpath)
 
-    ensure_server_ca()
-
-    sys.stdout.flush()
-
-    subprocess.check_call(['centos-cert', '-v'])
-
-    subprocess.check_call(['cbs', 'hello'])
 
 
 def ensure_server_ca():

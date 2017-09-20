@@ -8,6 +8,7 @@ import re
 import subprocess
 import sys
 import requests
+import koji  # oh yeah
 
 
 # Intended to run in Jenkins after every new Git tag.
@@ -119,6 +120,36 @@ def get_cbs_target(version):
     return 'storage7-ceph-%s-el7' % release
 
 
+def srpm_nvr(srpm):
+    """
+    Return the build NVR from this SRPM file.
+    # eg. 'ceph-ansible-3.0.0-0.rc10.1.el7'
+    :param version: a SRPM file, eg. ceph-ansible-3.0.0-0.1.rc10.1.el7.src.rpm
+    :returns: ``str``, ceph-ansible-3.0.0-0.1.rc10.1.el7
+    """
+    filename = os.path.basename(srpm)
+    if not filename.endswith('.src.rpm'):
+        raise ValueError('%s does not look like a SRPM' % filename)
+    return filename[:7]
+
+
+def build_exists(srpm):
+    """
+    Return True if a build already exists in CBS for this SRPM.
+
+    :param version: a SRPM file name,
+                    eg. ceph-ansible-3.0.0-0.1.rc10.1.el7.src.rpm
+    :returns: ``bool``, True if the build exists
+    """
+    nvr = srpm_nvr(srpm)
+    conf = koji.read_config('cbs')
+    hub = conf['server']
+    print('searching %s for %s' % (hub, nvr))
+    session = koji.ClientSession(hub, {})
+    build = session.getBuild(nvr)
+    return build is not None
+
+
 def make_srpm():
     """ Run "make srpm" and return the filename of the resulting .src.rpm. """
     cmd = ['make', 'srpm']
@@ -146,5 +177,5 @@ ensure_prereqs()
 version = get_version()
 target = get_cbs_target(version)
 srpm = make_srpm()
-if target:
+if target and not build_exists(srpm):
     cbs_build(target, srpm)

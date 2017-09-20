@@ -104,19 +104,19 @@ def cbs_build(target, srpm, scratch=False):
     subprocess.check_call(cmd)
 
 
-def get_cbs_targets(version):
+def get_cbs_target(version):
     """
-    Return a list of CBS targets for this ceph-ansible version,
+    Return a CBS build target for this ceph-ansible version,
 
     :param version: a ceph-ansible Git tag, eg. "v3.0.0rc7"
-    :returns: ``list`` of ``str``, eg ["storage7-ceph-jewel-el7"]
+    :returns: ``str``, eg "storage7-ceph-jewel-el7"
     """
     version = re.sub('^v', '', version)
-    releases = ['jewel', 'luminous']
+    release = 'jewel'
     if version.startswith('2.'):
         # too old; do nothing.
-        return []
-    return ['storage7-ceph-%s-el7' % rel for rel in releases]
+        return None
+    return 'storage7-ceph-%s-el7' % release
 
 
 def make_srpm():
@@ -144,7 +144,7 @@ def make_srpm():
 
 ensure_prereqs()
 version = get_version()
-targets = get_cbs_targets(version)
+target = get_cbs_target(version)
 srpm = make_srpm()
-for target in targets:
+if target:
     cbs_build(target, srpm)

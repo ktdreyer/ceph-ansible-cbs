@@ -17,16 +17,21 @@ Detailed steps:
 
 * `make srpm`
 
-* Map ceph-ansible versions to CBS build targets. For example,
-  ceph-ansible "v3" should go into the ["luminous" CBS build
-  target](http://cbs.centos.org/koji/buildtargetinfo?targetID=298). (We
-  will need to tweak these mappings over time as upstream ceph-ansible
-  and ceph evolve.)
+* Map ceph-ansible versions to CBS build targets. For example, ceph-ansible
+  "v3" should be built in the ["jewel" CBS build
+  target](http://cbs.centos.org/koji/buildtargetinfo?targetID=197)(We will
+  need to tweak these mappings over time as upstream ceph-ansible and ceph
+  evolve.)
 
 * Authenticate Jenkins user for CBS.
 
 * `cbs build` this ceph-ansible `.src.rpm` file for the appropriate CBS
   target.
+
+* Tag the build into any additional `-candidate` tags. For example, new
+  ceph-ansible v3 builds should be immediately tagged into
+  ["-luminous-candidate"](http://cbs.centos.org/koji/taginfo?tagID=1157) after
+  they are built in the -jewel build target.
 
 When this is complete, a new ceph-ansible RPM is available in the CBS
 `-candidate` target for the Storage SIG.

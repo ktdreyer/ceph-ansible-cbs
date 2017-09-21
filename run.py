@@ -12,6 +12,17 @@ import requests
 
 # Intended to run in Jenkins after every new Git tag.
 
+# Possible YAML layout for all our packages:
+# (need to see how this compares with rdoinfo)
+# (also this is ok for only el7, but we need to split this out for el7+el8)
+#   ceph-ansible:
+#     versions:
+#       r'v2':
+#         target: None
+#       r'v':
+#         target: storage7-ceph-jewel-el7
+#         tags:
+#          - storage7-ceph-luminous-candidate
 
 def ensure_prereqs():
     """ Ensure everything is set up as expected. """

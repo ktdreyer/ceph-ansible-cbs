@@ -102,6 +102,7 @@ def cbs_build(target, srpm, scratch=False):
     if scratch:
         cmd += ['--scratch']
     subprocess.check_call(cmd)
+    return srpm_nvr(srpm)
 
 
 def get_cbs_target(version):
@@ -117,6 +118,48 @@ def get_cbs_target(version):
         # too old; do nothing.
         return None
     return 'storage7-ceph-%s-el7' % release
+
+
+def get_needed_cbs_tags(version):
+    """
+    Return all the CBS tags that should have this ceph-ansible version.
+
+    :param version: a ceph-ansible Git tag, eg. "v3.0.0rc7"
+    :returns: ``list`` of ``str``, eg ["storage7-ceph-jewel-candidate"]
+    """
+    version = re.sub('^v', '', version)
+    releases = ['jewel', 'luminous']
+    if version.startswith('2.'):
+        # too old; do nothing.
+        return None
+    return ['storage7-ceph-%s-candidate' % release for release in releases]
+
+
+def get_cbs_tag_list(nvr):
+    """
+    Return all the CBS tags for this build.
+
+    :param version: a SRPM file that has been built.
+    :returns: ``list`` of ``str``, eg ["storage7-ceph-jewel-candidate"]
+    """
+    import koji
+    conf = koji.read_config('cbs')
+    hub = conf['server']
+    print('searching %s for %s tags' % (hub, nvr))
+    session = koji.ClientSession(hub, {})
+    return session.listTags(nvr)
+
+
+def tag_build(nvr, tag):
+    """
+    Tag this build NVR into this CBS tag.
+
+    :param nvr: a build Name-Version-Release, for example
+                "ceph-ansible-3.0.0-0.1.rc10.1.el7"
+    :param tag: a CBS tag, eg "storage7-ceph-luminous-candidate"
+    """
+    cmd = ['cbs', 'tag', tag, nvr]
+    subprocess.check_call(cmd)
 
 
 def srpm_nvr(srpm):
@@ -187,4 +230,10 @@ if not target:
     print('No CBS built target configured for %s. Quitting' % version)
     raise SystemExit()
 
-cbs_build(target, srpm)
+nvr = cbs_build(target, srpm)
+
+# Tag this build into any additional desired CBS tags
+needed_tags = get_needed_cbs_tags(version)
+already_tagged = get_cbs_tag_list(nvr)
+for tag in needed_tags - already_tagged:
+    tag_build(nvr, tag)

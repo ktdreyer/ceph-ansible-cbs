@@ -240,4 +240,5 @@ else:
 needed_tags = get_needed_cbs_tags(version)
 already_tagged = get_cbs_tag_list(nvr)
 for tag in needed_tags - already_tagged:
+    print('tagging %s into %s' % (nvr, tag))
     tag_build(nvr, tag)

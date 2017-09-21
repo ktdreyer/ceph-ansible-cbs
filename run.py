@@ -184,7 +184,7 @@ if build_exists(srpm):
 target = get_cbs_target(version)
 
 if not target:
-    print('No CBS built target configured for %s. Quitting' % target)
+    print('No CBS built target configured for %s. Quitting' % version)
     raise SystemExit()
 
 cbs_build(target, srpm)

@@ -106,7 +106,7 @@ def cbs_build(target, srpm, scratch=False):
 
 def get_cbs_target(version):
     """
-    Return a CBS build target for this ceph-ansible version,
+    Return a CBS build target for this ceph-ansible version.
 
     :param version: a ceph-ansible Git tag, eg. "v3.0.0rc7"
     :returns: ``str``, eg "storage7-ceph-jewel-el7"

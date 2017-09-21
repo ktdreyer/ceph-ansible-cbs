@@ -158,7 +158,8 @@ def get_cbs_tag_list(nvr):
     hub = conf['server']
     print('searching %s for %s tags' % (hub, nvr))
     session = koji.ClientSession(hub, {})
-    return session.listTags(nvr)
+    tags = session.listTags(nvr)
+    return [tag['name'] for tag in tags]
 
 
 def tag_build(nvr, tag):

@@ -175,13 +175,16 @@ def srpm_nvr(srpm):
     return filename[:-8]
 
 
-def build_exists(srpm):
+def get_cbs_build(srpm):
     """
-    Return True if a build already exists in CBS for this SRPM.
+    Return the Name-Version-Release if a build already exists in CBS for this
+    SRPM, or None if it does not exist.
 
     :param version: a SRPM file name,
                     eg. ceph-ansible-3.0.0-0.1.rc10.1.el7.src.rpm
-    :returns: ``bool``, True if the build exists
+    :returns: ``str``, eg. "ceph-ansible-3.0.0-0.1.rc10.1.el7"
+               if the build exists in CBS.
+               ``None`` if the build does not exist in CBS.
     """
     nvr = srpm_nvr(srpm)
     import koji  # oh yeah
@@ -190,7 +193,9 @@ def build_exists(srpm):
     print('searching %s for %s' % (hub, nvr))
     session = koji.ClientSession(hub, {})
     build = session.getBuild(nvr)
-    return build is not None
+    if build is None:
+        return None
+    return nvr
 
 
 def make_srpm():
@@ -220,17 +225,16 @@ ensure_prereqs()
 version = get_version()
 srpm = make_srpm()
 
-if build_exists(srpm):
-    print('%s has already been built in CBS. Quitting' % srpm)
-    raise SystemExit()
-
 target = get_cbs_target(version)
-
 if not target:
     print('No CBS built target configured for %s. Quitting' % version)
     raise SystemExit()
 
-nvr = cbs_build(target, srpm)
+nvr = get_cbs_build(srpm)
+if nvr is None:
+    nvr = cbs_build(target, srpm)
+else:
+    print('%s has already been built in CBS. Skipping build.' % nvr)
 
 # Tag this build into any additional desired CBS tags
 needed_tags = get_needed_cbs_tags(version)

@@ -175,7 +175,16 @@ def make_srpm():
 
 ensure_prereqs()
 version = get_version()
-target = get_cbs_target(version)
 srpm = make_srpm()
-if target and not build_exists(srpm):
-    cbs_build(target, srpm)
+
+if build_exists(srpm):
+    print('%s has already been built in CBS. Quitting' % srpm)
+    raise SystemExit()
+
+target = get_cbs_target(version)
+
+if not target:
+    print('No CBS built target configured for %s. Quitting' % target)
+    raise SystemExit()
+
+cbs_build(target, srpm)

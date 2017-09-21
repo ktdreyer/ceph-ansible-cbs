@@ -8,7 +8,6 @@ import re
 import subprocess
 import sys
 import requests
-import koji  # oh yeah
 
 
 # Intended to run in Jenkins after every new Git tag.
@@ -142,6 +141,7 @@ def build_exists(srpm):
     :returns: ``bool``, True if the build exists
     """
     nvr = srpm_nvr(srpm)
+    import koji  # oh yeah
     conf = koji.read_config('cbs')
     hub = conf['server']
     print('searching %s for %s' % (hub, nvr))

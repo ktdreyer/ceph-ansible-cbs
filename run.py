@@ -172,7 +172,7 @@ def srpm_nvr(srpm):
     filename = os.path.basename(srpm)
     if not filename.endswith('.src.rpm'):
         raise ValueError('%s does not look like a SRPM' % filename)
-    return filename[:7]
+    return filename[:-8]
 
 
 def build_exists(srpm):

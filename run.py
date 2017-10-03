@@ -109,7 +109,7 @@ def cbs_build(target, srpm, scratch=False):
     :param target: a CBS target, eg. storage7-ceph-jewel-el7
     :param   srpm: path to a .src.rpm file.
     """
-    cmd = ['cbs', 'build', target, srpm]
+    cmd = ['cbs', 'build', '--wait', target, srpm]
     if scratch:
         cmd += ['--scratch']
     subprocess.check_call(cmd)

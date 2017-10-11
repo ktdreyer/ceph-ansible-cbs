@@ -121,14 +121,13 @@ def get_cbs_target(version):
     Return a CBS build target for this ceph-ansible version.
 
     :param version: a ceph-ansible Git tag, eg. "v3.0.0rc7"
-    :returns: ``str``, eg "storage7-ceph-jewel-el7"
+    :returns: ``str``, eg "storage7-ceph-jewel-el7", or None if we should not
+               build this tag.
     """
     version = re.sub('^v', '', version)
-    release = 'jewel'
-    if version.startswith('2.'):
-        # too old; do nothing.
-        return None
-    return 'storage7-ceph-%s-el7' % release
+    if version.startswith('3.0.'):
+        return 'storage7-ceph-jewel-el7'
+    return None
 
 
 def get_needed_cbs_tags(version):
@@ -139,10 +138,9 @@ def get_needed_cbs_tags(version):
     :returns: ``list`` of ``str``, eg ["storage7-ceph-jewel-candidate"]
     """
     version = re.sub('^v', '', version)
-    releases = ['jewel', 'luminous']
-    if version.startswith('2.'):
-        # too old; do nothing.
-        return None
+    releases = []
+    if version.startswith('3.0.'):
+        releases = ['jewel', 'luminous']
     return ['storage7-ceph-%s-candidate' % release for release in releases]
 
 

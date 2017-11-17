@@ -193,8 +193,8 @@ def get_cbs_build(srpm):
     :param version: a SRPM file name,
                     eg. ceph-ansible-3.0.0-0.1.rc10.1.el7.src.rpm
     :returns: ``str``, eg. "ceph-ansible-3.0.0-0.1.rc10.1.el7"
-               if the build exists in CBS.
-               ``None`` if the build does not exist in CBS.
+               if the completed build exists in CBS.
+               ``None`` if the completed build does not exist in CBS.
     """
     nvr = srpm_nvr(srpm)
     import koji  # oh yeah
@@ -205,7 +205,9 @@ def get_cbs_build(srpm):
     build = session.getBuild(nvr)
     if build is None:
         return None
-    return nvr
+    if koji.BUILD_STATES[build['state']] == 'COMPLETE':
+        return nvr
+    return None
 
 
 def make_srpm():

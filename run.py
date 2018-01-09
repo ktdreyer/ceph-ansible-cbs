@@ -148,7 +148,7 @@ def get_cbs_tag_list(nvr):
     """
     Return all the CBS tags for this build.
 
-    :param version: a SRPM file that has been built.
+    :param nvr: a build Name-Version-Release that has been built.
     :returns: ``list`` of ``str``, eg ["storage7-ceph-jewel-candidate"]
     """
     import koji

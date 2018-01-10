@@ -175,9 +175,9 @@ def tag_build(nvr, tag):
 def srpm_nvr(srpm):
     """
     Return the build NVR from this SRPM file.
-    # eg. 'ceph-ansible-3.0.0-0.rc10.1.el7'
+
     :param version: a SRPM file, eg. ceph-ansible-3.0.0-0.1.rc10.1.el7.src.rpm
-    :returns: ``str``, ceph-ansible-3.0.0-0.1.rc10.1.el7
+    :returns: ``str``, eg. ceph-ansible-3.0.0-0.1.rc10.1.el7
     """
     filename = os.path.basename(srpm)
     if not filename.endswith('.src.rpm'):

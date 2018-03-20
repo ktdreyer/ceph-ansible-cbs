@@ -235,24 +235,25 @@ def make_srpm():
     return files[0]
 
 
-ensure_prereqs()
-version = get_version()
-srpm = make_srpm()
+if __name__ == '__main__':
+    ensure_prereqs()
+    version = get_version()
+    srpm = make_srpm()
 
-target = get_cbs_target(version)
-if not target:
-    print('No CBS built target configured for %s. Quitting' % version)
-    raise SystemExit()
+    target = get_cbs_target(version)
+    if not target:
+        print('No CBS built target configured for %s. Quitting' % version)
+        raise SystemExit()
 
-nvr = get_cbs_build(srpm)
-if nvr is None:
-    nvr = cbs_build(target, srpm)
-else:
-    print('%s has already been built in CBS. Skipping build.' % nvr)
+    nvr = get_cbs_build(srpm)
+    if nvr is None:
+        nvr = cbs_build(target, srpm)
+    else:
+        print('%s has already been built in CBS. Skipping build.' % nvr)
 
-# Tag this build into any additional desired CBS tags
-needed_tags = get_needed_cbs_tags(version)
-already_tagged = get_cbs_tag_list(nvr)
-for tag in set(needed_tags) - set(already_tagged):
-    print('tagging %s into %s' % (nvr, tag))
-    tag_build(nvr, tag)
+    # Tag this build into any additional desired CBS tags
+    needed_tags = get_needed_cbs_tags(version)
+    already_tagged = get_cbs_tag_list(nvr)
+    for tag in set(needed_tags) - set(already_tagged):
+        print('tagging %s into %s' % (nvr, tag))
+        tag_build(nvr, tag)

@@ -131,6 +131,8 @@ def get_cbs_target(version):
         return 'storage7-ceph-jewel-el7'
     if version.startswith('3.1.'):
         return 'storage7-ceph-mimic-el7'
+    if version.startswith('3.2.'):
+        return 'storage7-ceph-mimic-el7'
     return None
 
 
@@ -146,6 +148,8 @@ def get_needed_cbs_tags(version):
     if version.startswith('3.0.'):
         releases = ['jewel', 'luminous']
     if version.startswith('3.1.'):
+        releases = ['luminous', 'mimic']
+    if version.startswith('3.2.'):
         releases = ['luminous', 'mimic']
     return ['storage7-ceph-%s-candidate' % release for release in releases]
 

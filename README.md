@@ -34,7 +34,7 @@ Detailed steps:
   they are built in the -mimic build target.
 
 When this is complete, a new ceph-ansible RPM is available in the CBS
-`-candidate` target for the Storage SIG.
+`-candidate` tag for the Storage SIG.
 
 Authentication
 --------------

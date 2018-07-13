@@ -31,7 +31,7 @@ Detailed steps:
 * Tag the build into any additional `-candidate` tags. For example, new
   ceph-ansible v3 builds should be immediately tagged into
   ["-luminous-candidate"](http://cbs.centos.org/koji/taginfo?tagID=1157) after
-  they are built in the -jewel build target.
+  they are built in the -mimic build target.
 
 When this is complete, a new ceph-ansible RPM is available in the CBS
 `-candidate` target for the Storage SIG.

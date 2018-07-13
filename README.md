@@ -18,8 +18,8 @@ Detailed steps:
 * `make srpm`
 
 * Map ceph-ansible versions to CBS build targets. For example, ceph-ansible
-  "v3" should be built in the ["jewel" CBS build
-  target](http://cbs.centos.org/koji/buildtargetinfo?targetID=197) (We will
+  "v3" should be built in the ["mimic" CBS build
+  target](http://cbs.centos.org/koji/buildtargetinfo?targetID=383) (We will
   need to tweak these mappings over time as upstream ceph-ansible and ceph
   evolve.)
 

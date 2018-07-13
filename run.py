@@ -123,7 +123,7 @@ def get_cbs_target(version):
     Return a CBS build target for this ceph-ansible version.
 
     Note: changes here may require you to add the ceph-ansible package to the
-    tags in CBS. See the "./add-package" script in
+    tags in CBS with "cbs add-pkg". See the "./add-package" script in
     https://github.com/ktdreyer/storage-sig-utils . In the future, perhaps this
     Jenkins job could automate that CBS step so we don't have to think about
     it.

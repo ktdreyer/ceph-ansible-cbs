@@ -152,7 +152,7 @@ def get_needed_cbs_tags(version):
     version = re.sub('^v', '', version)
     releases = []
     if version.startswith('3.0.'):
-        releases = ['jewel', 'luminous']
+        releases = ['jewel']
     if version.startswith('3.1.'):
         releases = ['luminous', 'mimic']
     if version.startswith('3.2.'):

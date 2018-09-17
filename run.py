@@ -7,8 +7,6 @@ import os
 import re
 import subprocess
 import sys
-import shutil
-import tempfile
 import requests
 
 
@@ -226,35 +224,6 @@ def get_cbs_build(srpm):
     return None
 
 
-def hack_three_one_zero():
-    """
-    Modify the version for a 3.1.0 build.
-
-    Unfortunately "ceph-ansible-3.1.0beta2-1.el7" was pushed live.
-    https://bugs.centos.org/view.php?id=14593 To build an RPM with a version
-    that will override this, we tack on an extra zero if "Version" is "3.1.0".
-
-    RPM treats a Version of "3.1.0.0" as higher than "3.1.0beta2".
-
-    We can delete this hack after v3.1.1 is tagged in GitHub.
-    """
-    specfile = 'ceph-ansible.spec'
-    with open(specfile) as specfh:
-        contents = specfh.read()
-    oldv = 'Version:        3.1.0'
-    newv = 'Version:        3.1.0.0'
-    if oldv not in contents:
-        return
-    with tempfile.NamedTemporaryFile() as temp:
-        newcontents = contents.replace(oldv, newv)
-        newcontents = newcontents.replace('%{version}', '3.1.0')
-        newcontents = newcontents.replace('%autosetup -p1',
-                                          '%autosetup -p1 -n %{name}-3.1.0')
-        temp.write(newcontents)
-        temp.flush()
-        shutil.copyfile(temp.name, specfile)
-
-
 def make_srpm():
     """ Run "make srpm" and return the filename of the resulting .src.rpm. """
     cmd = ['make', 'srpm']
@@ -262,8 +231,6 @@ def make_srpm():
     # (needs to go into ceph-ansible Makefile upstream..)
     subprocess.check_call(['make', 'dist', 'spec'])
     subprocess.check_call(['make', 'spec'])
-    # Delete this hack after v3.1.1 is tagged in GitHub:
-    hack_three_one_zero()
     cmd = ['rpmbuild', '-bs', 'ceph-ansible.spec',
            '--define', '_topdir .',
            '--define', '_sourcedir .',

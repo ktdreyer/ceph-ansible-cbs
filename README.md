@@ -8,9 +8,11 @@ Koji, "CBS")](http://cbs.centos.org/).
 
 Detailed steps:
 
-* Poll for new ceph-ansible tags in GitHub (internal Jenkins polls every
-  hour on the hour. Note the JJB configuration currently lives outside this
-  repository, so just imagine this part).
+* Jenkins
+  [listens](https://apps.fedoraproject.org/datagrepper/raw?topic=org.fedoraproject.prod.github.push)
+  for new ceph-ansible tags in GitHub. (This is an internal Jenkins system, and
+  the JJB configuration currently lives outside this repository, so just
+  imagine this part).
 
 * Ensure the prerequisites tools are installed on the slave system, eg
   the "centos-packager" package must be installed.

@@ -254,7 +254,7 @@ if __name__ == '__main__':
 
     target = get_cbs_target(version)
     if not target:
-        print('No CBS built target configured for %s. Quitting' % version)
+        print('No CBS build target configured for %s. Quitting' % version)
         raise SystemExit()
 
     nvr = get_cbs_build(srpm)

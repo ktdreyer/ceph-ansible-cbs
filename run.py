@@ -152,7 +152,9 @@ def get_needed_cbs_tags(version):
     if version.startswith('3.0.'):
         releases = ['jewel']
     if version.startswith('3.2.'):
-        releases = ['luminous', 'mimic', 'nautilus']
+        releases = ['luminous', 'mimic']
+    if version.startswith('4.0.'):
+        releases = ['nautilus']
     return ['storage7-ceph-%s-candidate' % release for release in releases]
 
 

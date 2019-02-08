@@ -133,8 +133,6 @@ def get_cbs_target(version):
     version = re.sub('^v', '', version)
     if version.startswith('3.0.'):
         return 'storage7-ceph-jewel-el7'
-    if version.startswith('3.1.'):
-        return 'storage7-ceph-nautilus-el7'
     if version.startswith('3.2.'):
         return 'storage7-ceph-nautilus-el7'
     return None

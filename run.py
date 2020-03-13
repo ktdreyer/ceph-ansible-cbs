@@ -116,7 +116,7 @@ def cbs_build(target, srpm, scratch=False):
     return srpm_nvr(srpm)
 
 
-def get_cbs_target(version):
+def get_cbs_target(version, dist='el7'):
     """
     Return a CBS build target for this ceph-ansible version.
 
@@ -127,6 +127,7 @@ def get_cbs_target(version):
     it.
 
     :param version: a ceph-ansible Git tag, eg. "v3.0.0rc7"
+    :param dist: the RPM dist value, eg. "el7"
     :returns: ``str``, eg "storage7-ceph-jewel-el7", or None if we should not
                build this tag.
     """
@@ -136,15 +137,19 @@ def get_cbs_target(version):
     if version.startswith('3.2.'):
         return 'storage7-ceph-luminous-el7'
     if version.startswith('4.0.'):
-        return 'storage7-ceph-nautilus-el7'
+        if dist == 'el7':
+            return 'storage7-ceph-nautilus-el7'
+        elif dist == 'el8':
+            return 'storage8-ceph-nautilus-el8'
     return None
 
 
-def get_needed_cbs_tags(version):
+def get_needed_cbs_tags(version, dist='el7'):
     """
     Return all the CBS tags that should have this ceph-ansible version.
 
     :param version: a ceph-ansible Git tag, eg. "v3.0.0rc7"
+    :param dist: the RPM dist value, eg. "el7"
     :returns: ``list`` of ``str``, eg ["storage7-ceph-jewel-candidate"]
     """
     version = re.sub('^v', '', version)
@@ -155,7 +160,13 @@ def get_needed_cbs_tags(version):
         releases = ['luminous', 'mimic']
     if version.startswith('4.0.'):
         releases = ['nautilus']
-    return ['storage7-ceph-%s-candidate' % release for release in releases]
+    sig_release = 'storage7'
+    if dist == 'el8':
+        sig_release = 'storage8'
+    tags = []
+    for release in releases:
+        tags.append(sig_release + '-ceph-' + release + '-candidate')
+    return tags
 
 
 def get_cbs_tag_list(nvr):
@@ -224,8 +235,14 @@ def get_cbs_build(srpm):
     return None
 
 
-def make_srpm():
-    """ Run "make srpm" and return the filename of the resulting .src.rpm. """
+def make_srpm(dist='el7'):
+    """
+    Run "make srpm" and return the filename of the resulting .src.rpm.
+
+    :param dist: the RPM dist value, eg. "el7"
+    :returns: ``str``, eg. "ceph-ansible-3.0.0-0.1.rc10.1.el7.src.rpm"
+    """
+
     cmd = ['make', 'srpm']
     # Workaround the incompat between fedpkg and centos-packager
     # (needs to go into ceph-ansible Makefile upstream..)
@@ -235,13 +252,14 @@ def make_srpm():
            '--define', '_topdir .',
            '--define', '_sourcedir .',
            '--define', '_srcrpmdir .',
-           '--define', 'dist .el7',
+           '--define', 'dist .%s' % dist,
            ]
     subprocess.check_call(cmd)
     # TODO: cat some logs if that call failed?
-    files = glob('ceph-ansible-*.src.rpm')
+    files = glob('ceph-ansible-*.%s*.src.rpm' % dist)
     if not files:
-        raise RuntimeError('could not find any ceph-ansible .src.rpm')
+        raise RuntimeError('could not find ceph-ansible .src.rpm for '
+                           'dist %s' % dist)
     if len(files) > 1:
         raise RuntimeError('multiple ceph-ansible .src.rpm files found')
     return files[0]
@@ -250,22 +268,28 @@ def make_srpm():
 if __name__ == '__main__':
     ensure_prereqs()
     version = get_version()
-    srpm = make_srpm()
-
-    target = get_cbs_target(version)
-    if not target:
-        print('No CBS build target configured for %s. Quitting' % version)
-        raise SystemExit()
-
-    nvr = get_cbs_build(srpm)
-    if nvr is None:
-        nvr = cbs_build(target, srpm)
+    version = re.sub('^v', '', version)
+    if version.startswith('4.0.'):
+        dists = ['el7', 'el8']
     else:
-        print('%s has already been built in CBS. Skipping build.' % nvr)
+        dists = ['el7']
+    for dist in dists:
+        srpm = make_srpm(dist)
 
-    # Tag this build into any additional desired CBS tags
-    needed_tags = get_needed_cbs_tags(version)
-    already_tagged = get_cbs_tag_list(nvr)
-    for tag in set(needed_tags) - set(already_tagged):
-        print('tagging %s into %s' % (nvr, tag))
-        tag_build(nvr, tag)
+        target = get_cbs_target(version, dist)
+        if not target:
+            print('No CBS build target configured for %s. Quitting' % version)
+            raise SystemExit()
+
+        nvr = get_cbs_build(srpm)
+        if nvr is None:
+            nvr = cbs_build(target, srpm)
+        else:
+            print('%s has already been built in CBS. Skipping build.' % nvr)
+
+        # Tag this build into any additional desired CBS tags
+        needed_tags = get_needed_cbs_tags(version, dist)
+        already_tagged = get_cbs_tag_list(nvr)
+        for tag in set(needed_tags) - set(already_tagged):
+            print('tagging %s into %s' % (nvr, tag))
+            tag_build(nvr, tag)
